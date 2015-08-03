@@ -10,7 +10,7 @@ data deadline
 
 def init():
 	self.augurAddress = tx.origin
-	self.deadline = 47
+	self.deadline = 15000
 
 def buyRep():
 	if(msg.value==0):
@@ -27,7 +27,13 @@ def buyRep():
 		return(0)
 
 def getAmountSent(address):
-	return(self.Funders[self.addrToFunderNum[address]].amount)
+	amount = 0
+	i = 0
+	while i < self.funderNum:
+		if address == self.Funders[i].address:
+			amount += self.Funders[i].amount
+		i += 1
+	return(amount)
 
 def getBlockNumSent(address):
 	return(self.Funders[self.addrToFunderNum[address]].blockNum)
