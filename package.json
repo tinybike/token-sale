@@ -1,0 +1,22 @@
+{
+  "name": "augur-sale",
+  "version": "0.0.1",
+  "description": "augur token sale contract",
+  "main": "test.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AugurProject/ethSale.git"
+  },
+  "author": "Jack Peterson <jack@tinybike.net> (http://www.augur.net/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AugurProject/ethSale/issues"
+  },
+  "homepage": "https://github.com/AugurProject/ethSale#readme",
+  "dependencies": {
+    "augur.js": "^0.8.20"
+  }
+}
