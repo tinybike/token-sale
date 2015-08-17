@@ -1,0 +1,130 @@
+Notes:
+	sale contract address: 0xe28e72fcf78647adce1f1252f240bbfaebd63bcc
+	augur ethereum address (don't send funds directly to this) = 0xa04fc9bd2be8bcc6875d9ebb964e8f858bcc1b4f
+	deadline = 432015 or Oct 1.
+
+Steps:
+0. If you haven't imported your eth presale wallet yet/haven't installed ethereum yet, install instructions are available here: https://ethereum.org/cli and then type geth wallet import /path/to/my/presale.wallet 
+1. Launch geth with geth --unlock "account_you_want_to_buy-in_with" console (if you're not sure of your account address, launch geth console then do eth.accounts to find it)
+2. Paste this and hit enter:
+MyContract = eth.contract([{
+    "name": "addrToFunder(int256)",
+    "type": "function",
+    "inputs": [{ "name": "address", "type": "int256" }],
+    "outputs": [{ "name": "out", "type": "int256" }]
+},
+{
+    "name": "buyRep()",
+    "type": "function",
+    "inputs": [],
+    "outputs": [{ "name": "out", "type": "int256" }]
+},
+{
+    "name": "getAddrByIndex(int256)",
+    "type": "function",
+    "inputs": [{ "name": "index", "type": "int256" }],
+    "outputs": [{ "name": "out", "type": "int256" }]
+},
+{
+    "name": "getAmountSent(int256)",
+    "type": "function",
+    "inputs": [{ "name": "address", "type": "int256" }],
+    "outputs": [{ "name": "out", "type": "int256" }]
+},
+{
+    "name": "getAmtByIndex(int256)",
+    "type": "function",
+    "inputs": [{ "name": "index", "type": "int256" }],
+    "outputs": [{ "name": "out", "type": "int256" }]
+},
+{
+    "name": "getBlockNumByIndex(int256)",
+    "type": "function",
+    "inputs": [{ "name": "index", "type": "int256" }],
+    "outputs": [{ "name": "out", "type": "int256" }]
+},
+{
+    "name": "getBlockNumSent(int256)",
+    "type": "function",
+    "inputs": [{ "name": "address", "type": "int256" }],
+    "outputs": [{ "name": "out", "type": "int256" }]
+},
+{
+    "name": "getFunderNum()",
+    "type": "function",
+    "inputs": [],
+    "outputs": [{ "name": "out", "type": "int256" }]
+},
+{
+    "name": "getFundsRaised()",
+    "type": "function",
+    "inputs": [],
+    "outputs": [{ "name": "out", "type": "int256" }]
+}]);
+sale = MyContract.at('0xe28e72fcf78647adce1f1252f240bbfaebd63bcc');
+
+3. Edit this sale.buyRep({from: account_address_you_want_to_buyin_with, value: web3.toWei(1, "ether"), gas:150000}); by replacing 1 with the amount of ether you want to buy-in with and account_address_you_want_to_buyin_with with your account
+4. Paste it into geth then hit enter
+5. Wait until a few blocks come in or 30 seconds or so then paste sale.getAmountSent.call(account_address_you_want_to_buyin_with); into geth after replacing account_address_you_want_to_buyin_with with your account again and hit enter.  If you bought successfully you'll have your funds sent there
+
+Note:  If you want to see total raised paste sale.getFundsRaised.call(); into geth and hit enter
+
+
+Source:
+data Funders[](address, amount, blockNum)
+
+data funderNum
+
+data addrToFunderNum[]
+
+data augurAddress
+
+data deadline
+
+def init():
+	self.augurAddress = 0xa04fc9bd2be8bcc6875d9ebb964e8f858bcc1b4f
+	self.deadline = 432015
+
+def buyRep():
+	if(msg.value==0):
+		return(0)
+	if(block.number < self.deadline):
+		send(self.augurAddress, msg.value)
+		self.Funders[self.funderNum].amount = msg.value
+		self.Funders[self.funderNum].blockNum = block.number
+		self.Funders[self.funderNum].address = tx.origin
+		self.addrToFunderNum[tx.origin] = self.funderNum
+		self.funderNum += 1
+		return(1)
+	else:
+		return(0)
+
+def getAmountSent(address):
+	amount = 0
+	i = 0
+	while i < self.funderNum:
+		if address == self.Funders[i].address:
+			amount += self.Funders[i].amount
+		i += 1
+	return(amount)
+
+def getBlockNumSent(address):
+	return(self.Funders[self.addrToFunderNum[address]].blockNum)
+
+def getFunderNum():
+	return(self.funderNum)
+
+def getAmtByIndex(index):
+	return(self.Funders[index].amount)
+
+def getAddrByIndex(index):
+	return(self.Funders[index].address)
+
+def getBlockNumByIndex(index):
+	return(self.Funders[index].blockNum)
+
+def addrToFunder(address):
+	return(self.addrToFunderNum[address])
+
+def getFundsRaised():
+	return(self.augurAddress.balance)
