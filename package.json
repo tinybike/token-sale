@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/AugurProject/ethSale#readme",
   "dependencies": {
-    "augur.js": "^0.8.20"
+    "augur.js": "^0.9.8",
+    "web3": "^0.12.2"
   }
 }
