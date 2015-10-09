@@ -60,7 +60,7 @@ for group in (fifteen, ten, five, zero, late):
         total += Decimal(buy["amount"])
         buys.append(buy)
         if buy["referral"] != 0:
-            ref[buy["referral"]] = ref[buy["referral"]] + 1 if buy["referral"] in ref else 1
+            ref[buy["referral"]] = ref[buy["referral"]] + Decimal(buy["amount"]) if buy["referral"] in ref else Decimal(buy["amount"])
         t = datetime.datetime.utcfromtimestamp(buy["timestamp"]) - datetime.timedelta(hours=4)
         if t.month < 8 or (t.month == 8 and t.day < 15):
             print buy
@@ -68,6 +68,8 @@ for group in (fifteen, ten, five, zero, late):
             amounts.append(float(buy["amount"]))
             timestamps.append(t)
 buys = np.array(buys)
+for r in ref:
+    ref[r] = str(ref[r])
 print "Total:   ", str(total), "BTC"
 print "Expected: 18830.16363 BTC"
 print
@@ -186,17 +188,17 @@ print len(ethLateArray), "purchases"
 print "Total bought:", str(ethTotalLate), "ETH"
 print
 
-# plt.figure()
-# plt.axis("normal")
-# ax = plt.gca()
-# ax2 = ax.twinx()
-# ax.plot(timestamps, amounts, 'o', color="darkorange")
-# ax2.plot(ethTimestamps, ethAmounts, 'd')
-# ax.set_ylabel("BTC", fontsize=20, color="darkorange")
-# ax2.set_ylabel("ETH", fontsize=20, color="blue")
-# ax.grid = True
-# plt.title("Augur token sale", fontsize=20, color="black")
-# plt.show()
+plt.figure()
+plt.axis("normal")
+ax = plt.gca()
+ax2 = ax.twinx()
+ax.plot(timestamps, amounts, 'o', color="darkorange")
+ax2.plot(ethTimestamps, ethAmounts, 'd')
+ax.set_ylabel("BTC", fontsize=20, color="darkorange")
+ax2.set_ylabel("ETH", fontsize=20, color="blue")
+ax.grid = True
+plt.title("Augur token sale", fontsize=20, color="black")
+plt.show()
 
 btcGini = sum([i*r for (i,r) in enumerate(sorted(amounts))]) / sum(amounts)
 btcGini *= 2 / len(amounts)
