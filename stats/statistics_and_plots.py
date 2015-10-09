@@ -10,17 +10,14 @@ import datetime
 import csv
 from decimal import *
 import numpy as np
-import pandas as pd
-import matplotlib
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-pd.set_option("display.max_rows", 25)
-pd.set_option("display.width", 1000)
-pd.options.display.mpl_style = "default"
 np.set_printoptions(linewidth=125,
                     suppress=True,
                     formatter={"float": "{: 0.6f}".format})
-if matplotlib.is_interactive():
+mpl.style.use("ggplot")
+if mpl.is_interactive():
     plt.ioff()
 
 with open("data/fifteen.json") as datafile:
@@ -189,17 +186,27 @@ print len(ethLateArray), "purchases"
 print "Total bought:", str(ethTotalLate), "ETH"
 print
 
-plt.figure()
-plt.axis("normal")
-ax = plt.gca()
-ax2 = ax.twinx()
-ax.plot(timestamps, amounts, 'o', color="darkorange")
-ax2.plot(ethTimestamps, ethAmounts, 'd')
-ax.set_ylabel("BTC", fontsize=20, color="darkorange")
-ax2.set_ylabel("ETH", fontsize=20, color="blue")
-ax.grid = True
-plt.title("Augur token sale", fontsize=20, color="black")
-plt.show()
+# plt.figure()
+# plt.axis("normal")
+# ax = plt.gca()
+# ax2 = ax.twinx()
+# ax.plot(timestamps, amounts, 'o', color="darkorange")
+# ax2.plot(ethTimestamps, ethAmounts, 'd')
+# ax.set_ylabel("BTC", fontsize=20, color="darkorange")
+# ax2.set_ylabel("ETH", fontsize=20, color="blue")
+# ax.grid = True
+# plt.title("Augur token sale", fontsize=20, color="black")
+# plt.show()
+
+btcGini = sum([i*r for (i,r) in enumerate(sorted(amounts))]) / sum(amounts)
+btcGini *= 2 / len(amounts)
+btcGini -= 1 + 1 / len(amounts)
+print "Gini coefficient (BTC buyins):", btcGini
+
+ethGini = sum([i*r for (i,r) in enumerate(sorted(ethAmounts))]) / sum(ethAmounts)
+ethGini *= 2 / len(ethAmounts)
+ethGini -= 1 + 1 / len(ethAmounts)
+print "Gini coefficient (ETH buyins):", ethGini
 
 with open("data/btc-vs-time.csv", "w") as csvfile:
     for t, a in zip(timestamps, amounts):
@@ -211,3 +218,31 @@ with open("data/eth-vs-time.csv", "w") as csvfile:
 
 with open("data/referrals.json", "w") as reffile:
     json.dump(ref, reffile)
+
+with open("data/btc-amounts.csv", "w") as csvfile:
+    print >> csvfile, ",".join([str(amount) for amount in amounts])
+
+with open("data/eth-amounts.csv", "w") as csvfile:
+    print >> csvfile, ",".join([str(amount) for amount in ethAmounts])
+
+plt.subplots(1, 2)
+
+plt.subplot(1, 2, 1)
+n, bins, patches = plt.hist(amounts, 175, normed=0, histtype='stepfilled')
+plt.setp(patches, 'facecolor', 'darkorange', 'alpha', 0.75)
+plt.xlim([10**-1, np.max(amounts)*1.1])
+plt.xscale("log")
+plt.yscale("log")
+plt.xlabel("BTC", fontsize=14)
+plt.ylabel("number of purchases", fontsize=14)
+
+plt.subplot(1, 2, 2)
+n, bins, patches = plt.hist(ethAmounts, 175, normed=0, histtype='stepfilled')
+plt.setp(patches, 'facecolor', 'darkblue', 'alpha', 0.75)
+plt.xlim([10, np.max(ethAmounts)*1.1])
+plt.xscale("log")
+plt.yscale("log")
+plt.xlabel("ETH", fontsize=14)
+plt.ylabel("number of purchases", fontsize=14)
+
+plt.show()
