@@ -88,7 +88,7 @@ function buyin(contractAddress) {
 
         process.exit(0);
 
-    }, 30000);
+    }, 60000);
 
 }
 

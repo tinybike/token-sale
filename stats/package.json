@@ -1,0 +1,23 @@
+{
+  "name": "token-sale",
+  "version": "0.1.0",
+  "description": "Getting Augur's token sale data organized...",
+  "main": "eth_organizer.js",
+  "scripts": {
+    "test": "node eth_organizer.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/AugurProject/token-sale.git"
+  },
+  "author": "Jack Peterson <jack@tinybike.net>",
+  "license": "MIT",
+  "homepage": "https://github.com/AugurProject/token-sale#readme",
+  "dependencies": {
+    "async": "^1.4.2",
+    "augur-abi": "^0.2.3",
+    "ethrpc": "^0.3.8",
+    "lodash": "^3.10.1",
+    "moment": "^2.10.6"
+  }
+}
