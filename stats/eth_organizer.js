@@ -199,7 +199,7 @@ ethrpc.blockNumber(function (blockNumber) {
             });
         }, function (err) {
             if (err) return console.error("[async.each]", err);
-            fs.writeFile("data/eth-buys.json", JSON.stringify(buys, null, 2), function (err) {
+            fs.writeFile("data/eth-buys.json", JSON.stringify(buys, null, 4), function (err) {
                 if (err) return console.error("[fs.writeFile]", err);
                 console.log("Wrote results to file successfully");
             });

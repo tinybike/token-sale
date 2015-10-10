@@ -54,13 +54,21 @@ total = Decimal(0)
 buys = []
 amounts = []
 timestamps = []
+finalAmounts = {}
 ref = {}
 for group in (fifteen, ten, five, zero, late):
     for buy in group:
         total += Decimal(buy["amount"])
         buys.append(buy)
         if buy["referral"] != 0:
-            ref[buy["referral"]] = ref[buy["referral"]] + Decimal(buy["amount"]) if buy["referral"] in ref else Decimal(buy["amount"])
+            if buy["referral"] in ref:
+                ref[buy["referral"]] += Decimal(buy["amount"])
+            else:
+                ref[buy["referral"]] = Decimal(buy["amount"])
+        if buy["accountID"] in finalAmounts:
+            finalAmounts[buy["accountID"]] += Decimal(buy["adjusted_amount"])
+        else:
+            finalAmounts[buy["accountID"]] = Decimal(buy["adjusted_amount"])
         t = datetime.datetime.utcfromtimestamp(buy["timestamp"]) - datetime.timedelta(hours=4)
         if t.month < 8 or (t.month == 8 and t.day < 15):
             print buy
@@ -70,14 +78,17 @@ for group in (fifteen, ten, five, zero, late):
 buys = np.array(buys)
 for r in ref:
     ref[r] = str(ref[r])
+for key in finalAmounts:
+    finalAmounts[key] = str(finalAmounts[key])
 print "Total:   ", str(total), "BTC"
 print "Expected: 18830.16363 BTC"
 print
 print "Referrals:"
-print json.dumps(ref, indent=2, sort_keys=True)
+print json.dumps(ref, indent=4, sort_keys=True)
 print
 
 totalEth = Decimal(0)
+finalEthAmounts = {}
 ethBuys = []
 ethAmounts = []
 ethTimestamps = []
@@ -94,6 +105,10 @@ ethLateArray = []
 for a, b in eth.items():
     for buy in b:
         totalEth += Decimal(buy["amount"])
+        if buy["address"] in finalEthAmounts:
+            finalEthAmounts[buy["address"]] += Decimal(buy["adjusted_amount"])
+        else:
+            finalEthAmounts[buy["address"]] = Decimal(buy["adjusted_amount"])
         ethBuys.append(buy)
         ethAmounts.append(float(buy["amount"]))
         t = datetime.datetime.utcfromtimestamp(buy["timestamp"]) - datetime.timedelta(hours=4)
@@ -114,9 +129,17 @@ for a, b in eth.items():
             ethTotalLate += Decimal(buy["amount"])
             ethLateArray.append(float(buy["amount"]))
 ethBuys = np.array(ethBuys)
+for key in finalEthAmounts:
+    finalEthAmounts[key] = str(finalEthAmounts[key])
 print "Total:   ", str(totalEth), "ETH"
 print "Expected: 1176816.436 ETH"
 print
+
+with open("data/btc_adjusted_amounts.json", "w") as btcfile:
+    json.dump(finalAmounts, btcfile, indent=4, sort_keys=True)
+
+with open("data/eth_adjusted_amounts.json", "w") as ethfile:
+    json.dump(finalEthAmounts, ethfile, indent=4, sort_keys=True)
 
 totalFifteen = 0
 fifteenArray = []
@@ -193,7 +216,7 @@ plt.axis("normal")
 ax = plt.gca()
 ax2 = ax.twinx()
 ax.plot(timestamps, amounts, 'o', color="darkorange")
-ax2.plot(ethTimestamps, ethAmounts, 'd')
+ax2.plot(ethTimestamps, ethAmounts, 'd', color="blue")
 ax.set_ylabel("BTC", fontsize=20, color="darkorange")
 ax2.set_ylabel("ETH", fontsize=20, color="blue")
 ax.grid = True

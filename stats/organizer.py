@@ -18,7 +18,7 @@ MULTISIG_ADDR = "3N6S9PLVizPuf8nZkhVzp11PKhTiuTVE6R"
 
 def save_data(data, label):
     with open("data/%s.json" % label, "w") as jsonfile:
-        json.dump(data, jsonfile)
+        json.dump(data, jsonfile, indent=4, sort_keys=True)
     with open("data/%s.csv" % label, "w") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["bitcoin address",
@@ -103,7 +103,8 @@ def parse_tx(saledata, user, tx):
                 "addr": user["bitcoin_address"],
                 "amount": Decimal(output["value"]) / Decimal(10**8),
                 "timestamp": tx["time"],
-                "referral": user["person_who_referred"]
+                "referral": user["person_who_referred"],
+                "accountID": user["data_href"].split('/')[-2]
             })
     return saledata
 
