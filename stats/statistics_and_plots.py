@@ -55,6 +55,7 @@ buys = []
 amounts = []
 timestamps = []
 finalAmounts = {}
+totalAdjusted = Decimal(0)
 ref = {}
 for group in (fifteen, ten, five, zero, late):
     for buy in group:
@@ -69,6 +70,7 @@ for group in (fifteen, ten, five, zero, late):
             finalAmounts[buy["accountID"]] += Decimal(buy["adjusted_amount"])
         else:
             finalAmounts[buy["accountID"]] = Decimal(buy["adjusted_amount"])
+        totalAdjusted += Decimal(buy["adjusted_amount"])
         t = datetime.datetime.utcfromtimestamp(buy["timestamp"]) - datetime.timedelta(hours=4)
         if t.month < 8 or (t.month == 8 and t.day < 15):
             print buy
@@ -81,6 +83,7 @@ for r in ref:
 for key in finalAmounts:
     finalAmounts[key] = str(finalAmounts[key])
 print "Total:   ", str(total), "BTC"
+print "Adjusted:", str(totalAdjusted), "BTC"
 print "Expected: 18830.16363 BTC"
 print
 print "Referrals:"
@@ -88,6 +91,7 @@ print json.dumps(ref, indent=4, sort_keys=True)
 print
 
 totalEth = Decimal(0)
+totalAdjustedEth = Decimal(0)
 finalEthAmounts = {}
 ethBuys = []
 ethAmounts = []
@@ -105,10 +109,13 @@ ethLateArray = []
 for a, b in eth.items():
     for buy in b:
         totalEth += Decimal(buy["amount"])
+        if buy["group"] == "late":
+            buy["adjusted_amount"] = buy["amount"]
         if buy["address"] in finalEthAmounts:
             finalEthAmounts[buy["address"]] += Decimal(buy["adjusted_amount"])
         else:
             finalEthAmounts[buy["address"]] = Decimal(buy["adjusted_amount"])
+        totalAdjustedEth += Decimal(buy["adjusted_amount"])
         ethBuys.append(buy)
         ethAmounts.append(float(buy["amount"]))
         t = datetime.datetime.utcfromtimestamp(buy["timestamp"]) - datetime.timedelta(hours=4)
@@ -132,6 +139,7 @@ ethBuys = np.array(ethBuys)
 for key in finalEthAmounts:
     finalEthAmounts[key] = str(finalEthAmounts[key])
 print "Total:   ", str(totalEth), "ETH"
+print "Adjusted:", str(totalAdjustedEth), "ETH"
 print "Expected: 1176816.436 ETH"
 print
 

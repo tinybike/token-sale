@@ -126,7 +126,7 @@ ethrpc.blockNumber(function (blockNumber) {
                                             if (buy.blocknumber >= 317594) {
                                                 buy.group = "late";
                                                 buy.bonus = 0;
-                                                buy.adjusted_amount = 0;
+                                                buy.adjusted_amount = buy.amount;
 
                                             // 0% bonus
                                             } else if (buy.blocknumber >= 188576) {
