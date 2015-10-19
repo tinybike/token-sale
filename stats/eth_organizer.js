@@ -123,26 +123,26 @@ ethrpc.blockNumber(function (blockNumber) {
                                         if (block && block.timestamp) {
 
                                             // late buyers
-                                            if (buy.blocknumber >= 317594) {
+                                            if (buy.blocknumber >= 318019) {
                                                 buy.group = "late";
                                                 buy.bonus = 0;
                                                 buy.adjusted_amount = buy.amount;
 
                                             // 0% bonus
-                                            } else if (buy.blocknumber >= 188576) {
+                                            } else if (buy.blocknumber >= 189020) {
                                                 buy.group = "0%";
                                                 buy.bonus = 0;
                                                 buy.adjusted_amount =  buy.amount;
 
                                             // 5% bonus
-                                            } else if (buy.blocknumber >= 151173) {
+                                            } else if (buy.blocknumber >= 151576) {
                                                 buy.group = "5%";
                                                 buy.bonus = abi.bignum(buy.amount).times(abi.bignum("0.05"));
                                                 buy.adjusted_amount = abi.bignum(buy.amount).plus(buy.bonus).toFixed();
                                                 buy.bonus = buy.bonus.toFixed();
 
                                             // 10% bonus
-                                            } else if (buy.blocknumber >= 125987) {
+                                            } else if (buy.blocknumber >= 126444) {
                                                 buy.group = "10%";
                                                 buy.bonus = abi.bignum(buy.amount).times(abi.bignum("0.1"));
                                                 buy.adjusted_amount = abi.bignum(buy.amount).plus(buy.bonus).toFixed();

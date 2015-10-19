@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 np.set_printoptions(linewidth=125,
                     suppress=True,
-                    formatter={"float": "{: 0.6f}".format})
+                    formatter={"float": "{: 0.16f}".format})
 mpl.style.use("ggplot")
 if mpl.is_interactive():
     plt.ioff()
